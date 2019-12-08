@@ -5,6 +5,7 @@ from insertion_sort import InsertionSort
 from bubble_sort import BubbleSort
 from selection_sort import SelectionSort
 from merge_sort import MergeSort
+from counting_sort import CountingSort
 
 
 def main(stdscr):
@@ -16,7 +17,9 @@ def main(stdscr):
         curses.curs_set(0)
 
     def simulate():
-        sorter_classes = [SelectionSort, BubbleSort, InsertionSort, MergeSort]
+        sorter_classes = [
+            CountingSort, SelectionSort, BubbleSort, InsertionSort, MergeSort
+        ]
         for sorter_class in sorter_classes:
             items = [5, 3, 6, 2, 7, 2, 9, 10]
             animators = [Animator(stdscr), Animator(stdscr, 25)]
