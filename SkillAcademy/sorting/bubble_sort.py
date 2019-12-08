@@ -49,4 +49,6 @@ class BubbleSort:
             if not swapped: break
             last_unsorted_index = next_last_unsorted_index
 
+        animator.draw(sorted_indexes=range(0, len(items)))
+        animator.pause()
         return items
