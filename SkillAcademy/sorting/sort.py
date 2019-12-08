@@ -2,6 +2,7 @@ import curses
 from animator import Animator
 from time import sleep
 from insertion_sort import InsertionSort
+from bubble_sort import BubbleSort
 
 
 def main(stdscr):
@@ -11,7 +12,7 @@ def main(stdscr):
         curses.curs_set(0)
 
     def simulate():
-        sorter_classes = [InsertionSort]
+        sorter_classes = [BubbleSort, InsertionSort]
         for sorter_class in sorter_classes:
             items = [5, 3, 6, 2, 7, 2, 9, 10]
             animator = Animator(stdscr, items)
