@@ -1,13 +1,13 @@
 class InsertionSort:
-    def __init__(self, items, animator):
+    def __init__(self, items, animator, animator2):
         self._items = items
         self._animator = animator
+        self._animator2 = animator2
 
     def sort(self):
         items = self._items
         #region UI
         animator = self._animator
-        animator.pause()
         #endregion
 
         for i in range(1, len(items)):
@@ -18,7 +18,7 @@ class InsertionSort:
             animator.set_label(
                 f"Take out {to_be_inserted}. We need to find out correct position for {to_be_inserted}"
             )
-            animator.draw(compared_indexes=[i], sorted_indexes=range(i))
+            animator.draw(items, compared_indexes=[i], sorted_indexes=range(i))
             animator.pause()
             #endregion
             items[i] = None
@@ -29,7 +29,9 @@ class InsertionSort:
             for j in range(i - 1, -1, -1):
                 #region UI
                 animator.set_label(f"Compare {items[j]} with {to_be_inserted}")
-                animator.draw(compared_indexes=[j], sorted_indexes=range(i))
+                animator.draw(items,
+                              compared_indexes=[j],
+                              sorted_indexes=range(i))
                 animator.pause()
                 #endregion
 
@@ -58,7 +60,7 @@ class InsertionSort:
             #region UI
             animator.set_label(
                 f"Insert {to_be_inserted} to position {correct_position}")
-            animator.draw(sorted_indexes=range(i + 1))
+            animator.draw(items, sorted_indexes=range(i + 1))
             animator.pause()
             #endregion
             items[correct_position] = to_be_inserted

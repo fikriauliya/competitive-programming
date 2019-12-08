@@ -1,30 +1,28 @@
 import curses
+from time import sleep
 
 
 class Animator:
     WIDTH_PER_ITEM = 5
     BAR_HEIGHT = 20
 
-    def __init__(self, stdscr, items):
+    def __init__(self, stdscr, y_offset=0):
         self._stdscr = stdscr
-        self._statusscr = curses.newwin(1, curses.COLS, 0, 0)
-        self._numscr = curses.newwin(1, curses.COLS, 2, 0)
-        self._barscr = curses.newwin(self.BAR_HEIGHT, curses.COLS, 3, 0)
-        self._items = items
-        self._maximum = max(items)
-
-        self._last_compared_indexes = []
-        self._last_sorted_indexes = []
+        self._statusscr = curses.newwin(1, curses.COLS, 0 + y_offset, 0)
+        self._numscr = curses.newwin(1 + self.BAR_HEIGHT, curses.COLS,
+                                     2 + y_offset, 0)
         self.COMPARED_ATTRIBUTES = curses.A_UNDERLINE | curses.color_pair(1)
         self.SORTED_ATTRIBUTES = curses.A_BOLD | curses.color_pair(2)
+        self.LEFT_ATTRIBUTES = curses.A_BOLD | curses.color_pair(3)
+        self.RIGHT_ATTRIBUTES = curses.A_BOLD | curses.color_pair(4)
         self.BAR_ATTRIBUTES = curses.A_REVERSE
 
     def set_label(self, label):
         self._statusscr.clear()
-        self._statusscr.addstr(0, 0, label)
+        self._statusscr.addstr(label)
         self._statusscr.refresh()
 
-    def _draw_item(self, index, item, attributes=None):
+    def _draw_item(self, index, item, attributes=None, maximum=10):
         if item is None: return
 
         self._numscr.move(0, index * self.WIDTH_PER_ITEM)
@@ -33,31 +31,46 @@ class Animator:
         else:
             self._numscr.addstr(f'{item}')
 
-        height = int(round(item / self._maximum * self.BAR_HEIGHT, 0))
+        height = int(round(item / maximum * self.BAR_HEIGHT, 0))
         for i in range(height):
-            self._barscr.move(self.BAR_HEIGHT - i - 1,
-                              index * self.WIDTH_PER_ITEM)
+            self._numscr.move(self.BAR_HEIGHT - i, index * self.WIDTH_PER_ITEM)
             if attributes:
-                self._barscr.addstr(" ", attributes | self.BAR_ATTRIBUTES)
+                self._numscr.addstr(" ", attributes | self.BAR_ATTRIBUTES)
             else:
-                self._barscr.addstr(" ", self.BAR_ATTRIBUTES)
+                self._numscr.addstr(" ", self.BAR_ATTRIBUTES)
 
-    def draw(self, compared_indexes=[], sorted_indexes=[]):
-        self._last_compared_indexes = compared_indexes
-        self._last_sorted_indexes = sorted_indexes
+    def draw(self,
+             items,
+             compared_indexes=[],
+             sorted_indexes=[],
+             left_indexes=[],
+             right_indexes=[]):
+        non_none_items = list(filter(lambda x: x is not None, items))
+        if len(non_none_items) == 0:
+            self._numscr.clear()
+            self._numscr.refresh()
+            return
+        maximum = max(non_none_items)
 
         self._numscr.clear()
-        self._barscr.clear()
-        for (i, item) in enumerate(self._items):
-            if i in compared_indexes:
-                self._draw_item(i, item, self.COMPARED_ATTRIBUTES)
-            elif i in sorted_indexes:
-                self._draw_item(i, item, self.SORTED_ATTRIBUTES)
-            else:
-                self._draw_item(i, item)
+        for (i, item) in enumerate(items):
+            attributes = None
+            if i in compared_indexes: attributes = self.COMPARED_ATTRIBUTES
+            if i in sorted_indexes: attributes = self.SORTED_ATTRIBUTES
+            if i in left_indexes: attributes = self.LEFT_ATTRIBUTES
+            elif i in right_indexes: attributes = self.RIGHT_ATTRIBUTES
+
+            if attributes is None: self._draw_item(i, item)
+            else: self._draw_item(i, item, maximum=10, attributes=attributes)
         self._numscr.refresh()
-        self._barscr.refresh()
+
+    def clear(self):
+        self._statusscr.clear()
+        self._numscr.clear()
+        self._statusscr.refresh()
+        self._numscr.refresh()
 
     def pause(self):
-        self.draw(self._last_compared_indexes, self._last_sorted_indexes)
+        # self.draw(self._last_compared_indexes, self._last_sorted_indexes)
+        # sleep(0.4)
         self._stdscr.getch()

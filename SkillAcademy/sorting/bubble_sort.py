@@ -1,7 +1,8 @@
 class BubbleSort:
-    def __init__(self, items, animator):
+    def __init__(self, items, animator, animator2):
         self._items = items
         self._animator = animator
+        self._animator2 = animator2
 
     def sort(self):
         items = self._items
@@ -22,7 +23,8 @@ class BubbleSort:
 
             for i in range(last_unsorted_index):
                 #region UI update
-                animator.draw(compared_indexes=[i, i + 1],
+                animator.draw(items,
+                              compared_indexes=[i, i + 1],
                               sorted_indexes=range(last_unsorted_index + 1,
                                                    len(items)))
                 #endregion
@@ -35,7 +37,8 @@ class BubbleSort:
                     next_last_unsorted_index = i
                     swapped = True
                     #region UI update
-                    animator.draw(compared_indexes=[i, i + 1],
+                    animator.draw(items,
+                                  compared_indexes=[i, i + 1],
                                   sorted_indexes=range(last_unsorted_index + 1,
                                                        len(items)))
                     #end region
@@ -49,6 +52,6 @@ class BubbleSort:
             if not swapped: break
             last_unsorted_index = next_last_unsorted_index
 
-        animator.draw(sorted_indexes=range(0, len(items)))
+        animator.draw(items, sorted_indexes=range(0, len(items)))
         animator.pause()
         return items

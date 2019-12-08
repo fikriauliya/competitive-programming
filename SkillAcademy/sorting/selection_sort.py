@@ -1,7 +1,8 @@
 class SelectionSort:
-    def __init__(self, items, animator):
+    def __init__(self, items, animator, animator2):
         self._items = items
         self._animator = animator
+        self._animator2 = animator2
 
     def sort(self):
         items = self._items
@@ -16,7 +17,8 @@ class SelectionSort:
         for i in range(len(items) - 1):
             minimum_index = i
             for j in range(i, len(items)):
-                animator.draw(compared_indexes=[minimum_index, j],
+                animator.draw(items,
+                              compared_indexes=[minimum_index, j],
                               sorted_indexes=range(i))
                 animator.pause()
                 if items[j] < items[minimum_index]:
@@ -27,7 +29,8 @@ class SelectionSort:
                     minimum_index = j
                 animator.set_label("")
             animator.set_label(f"Swap {items[i]} with {items[minimum_index]}")
-            animator.draw(compared_indexes=[i, minimum_index],
+            animator.draw(items,
+                          compared_indexes=[i, minimum_index],
                           sorted_indexes=range(i))
             animator.pause()
             swap(items, i, minimum_index)
