@@ -46,15 +46,6 @@ impl<R: io::BufRead> UnsafeScanner<R> {
 }
 
 fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W) {
-    loop {
-        let (a, b) = (scan.token::<i64>(), scan.token::<i64>());
-        if let (Some(a), Some(b)) = (a, b) {
-            let diff = (a - b).abs();
-            writeln!(out, "{}", diff).unwrap();
-        } else {
-            return;
-        }
-    }
 }
 
 fn main() {
