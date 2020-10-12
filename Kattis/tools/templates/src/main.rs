@@ -16,6 +16,15 @@ impl<R: io::BufRead> UnsafeScanner<R> {
         }
     }
 
+    pub fn trim_newline(s: &mut String) {
+        if s.ends_with('\n') {
+            s.pop();
+            if s.ends_with('\r') {
+                s.pop();
+            }
+        }
+    }
+
     pub fn token<T: str::FromStr>(&mut self) -> Option<T> {
         loop {
             if let Some(token) = self.buf_iter.next() {
@@ -35,12 +44,15 @@ impl<R: io::BufRead> UnsafeScanner<R> {
         }
     }
 
-    pub fn line<T: str::FromStr>(&mut self) -> Option<String> {
+    pub fn line(&mut self) -> Option<String> {
         let mut input = String::new();
         let len = self.reader.read_line(&mut input).expect("Failed read");
         match len {
             0 => None,
-            _ => Some(input)
+            _ => {
+                Self::trim_newline(&mut input);
+                Some(input)
+            }
         }
     }
 }
