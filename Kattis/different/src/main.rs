@@ -16,15 +16,18 @@ impl<R: io::BufRead> UnsafeScanner<R> {
         }
     }
 
-    pub fn token<T: str::FromStr>(&mut self) -> T {
+    pub fn token<T: str::FromStr>(&mut self) -> Option<T> {
         loop {
             if let Some(token) = self.buf_iter.next() {
-                return token.parse().ok().expect("Failed parse");
+                return Some(token.parse().ok().expect("Failed parse"));
             }
             self.buf_str.clear();
-            self.reader
+            let len = self.reader
                 .read_until(b'\n', &mut self.buf_str)
                 .expect("Failed read");
+            if len == 0 { 
+                return None;
+            }
             self.buf_iter = unsafe {
                 let slice = str::from_utf8_unchecked(&self.buf_str);
                 std::mem::transmute(slice.split_ascii_whitespace())
@@ -32,14 +35,26 @@ impl<R: io::BufRead> UnsafeScanner<R> {
         }
     }
 
-    pub fn line<T: str::FromStr>(&mut self) -> String {
+    pub fn line<T: str::FromStr>(&mut self) -> Option<String> {
         let mut input = String::new();
-        self.reader.read_line(&mut input).expect("Failed read");
-        input
+        let len = self.reader.read_line(&mut input).expect("Failed read");
+        match len {
+            0 => None,
+            _ => Some(input)
+        }
     }
 }
 
 fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W) {
+    loop {
+        let (a, b) = (scan.token::<i64>(), scan.token::<i64>());
+        if let (Some(a), Some(b)) = (a, b) {
+            let diff = (a - b).abs();
+            writeln!(out, "{}", diff).unwrap();
+        } else {
+            return;
+        }
+    }
 }
 
 fn main() {

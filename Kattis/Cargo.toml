@@ -1,6 +1,8 @@
 [workspace]
-
 members = [
   "cd",
   "joinstrings",
+  "sim",
+  "backspace",
+  "different"
 ]
