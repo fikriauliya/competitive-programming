@@ -4,5 +4,6 @@ members = [
   "joinstrings",
   "sim",
   "backspace",
-  "different"
+  "different",
+  "tools"
 ]
