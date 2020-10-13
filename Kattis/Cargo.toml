@@ -1,10 +1,2 @@
 [workspace]
-members = [
-  "cd",
-  "joinstrings",
-  "sim",
-  "backspace",
-  "different",
-  "tools",
-  "thelastproblem"
-]
+members = ["cd", "joinstrings", "sim", "backspace", "different", "tools", "thelastproblem", "quadrant", "leftbeehind"]
