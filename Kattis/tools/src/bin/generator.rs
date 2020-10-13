@@ -4,6 +4,7 @@ use std::fs;
 use std::path::Path;
 use std::io::Write;
 use std::process::Command;
+use toml::Value;
 
 fn create_root_folder(project_name: &str) {
     let root = Path::new(&project_name);
@@ -48,9 +49,25 @@ fn download_test_cases(project_name: &str) {
     fs::remove_file(&out_file).unwrap();
 }
 
+fn inject_to_cargo(project_name: &str) {
+    let content = fs::read_to_string("Cargo.toml").unwrap();
+    let mut value = content.parse::<Value>().unwrap();
+    let members = value.get_mut("workspace").unwrap().get_mut("members").unwrap();
+    if let Value::Array(members) = members {
+        let project_name_value = Value::String(project_name.to_string());
+        if !members.contains(&project_name_value) {
+            members.push(project_name_value);
+        }
+    }
+
+    let mut out = fs::File::create("Cargo.toml").unwrap();
+    out.write_all(value.to_string().as_bytes()).unwrap();
+}
+
 fn main() {
     let project_name = env::var("project_name").unwrap();
     create_root_folder(&project_name);
     geneate_project(&project_name);
     download_test_cases(&project_name);
+    inject_to_cargo(&project_name);
 }
