@@ -3,3 +3,7 @@ run:
 	diff -y --left-column $(project)/$(testcase).ans $(project)/$(testcase).out
 generate:
 	project_name=$(project) cargo run -p tools --bin generator
+commit:
+	git add $(project)
+	git c -m "Add $(project)"
+	git push
