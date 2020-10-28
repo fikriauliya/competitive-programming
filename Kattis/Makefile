@@ -4,6 +4,7 @@ run:
 generate:
 	project_name=$(project) cargo run -p tools --bin generator
 commit:
+	git add Cargo.toml
 	git add $(project)
-	git c -m "Add $(project)"
+	git c -m "Add $(difficulty) $(project)"
 	git push
