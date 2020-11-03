@@ -135,7 +135,7 @@ impl VariableOrStringLiteral {
         if t.starts_with("\"") {
             let st = line.find("\"").unwrap();
             let ed = line.rfind("\"").unwrap();
-            let mut res = &line[st+1..ed];
+            let res = &line[st+1..ed];
             StringLiteral(res.to_string())
         } else {
             Variable(t)
@@ -204,11 +204,11 @@ impl Statement {
                 else { None }
             },
             Print(var) => {
-                write!(out, "{}", var.eval(&variables));
+                write!(out, "{}", var.eval(&variables)).ok();
                 None
             }
             Println(var) => {
-                writeln!(out, "{}", var.eval(&variables));
+                writeln!(out, "{}", var.eval(&variables)).ok();
                 None
             }
         }
