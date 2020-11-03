@@ -220,21 +220,20 @@ fn parse_label(token: &mut SplitAsciiWhitespace) -> Label {
     token.next().unwrap().parse::<i32>().unwrap()
 }
 
-
 type Variables = HashMap<VariableName, Integer>;
 
-fn run<W: io::Write>(out: &mut W, statements: &Statements,
-                     variables: &mut Variables,
-                     next_labels: &HashMap<Label, Label>,
-                     cur_label: Label, last_label: Label) {
-    let cur_statement = statements.get(&cur_label).unwrap();
-    let next_label = cur_statement.eval(out, variables);
-    if cur_label == last_label { return; }
-    let cur_label = match next_label {
-        None => *next_labels.get(&cur_label).unwrap(),
-        Some(next) => next
-    };
-    run(out, statements, variables, next_labels, cur_label, last_label);
+fn run<W: io::Write>(out: &mut W, statements: &Statements, next_labels: &HashMap<Label, Label>, cur_label: Label, last_label: Label) {
+    let mut cur_label = cur_label;
+    let mut variables: Variables = HashMap::new();
+    loop {
+        let cur_statement = statements.get(&cur_label).unwrap();
+        let next_label = cur_statement.eval(out, &mut variables);
+        if cur_label == last_label { break; }
+        cur_label = match next_label {
+            None => *next_labels.get(&cur_label).unwrap(),
+            Some(next) => next
+        }
+    }
 }
 
 fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W) {
@@ -255,7 +254,5 @@ fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W)
     for i in 0..labels.len() - 1 {
         next_labels.insert(labels[i], labels[i+1]);
     }
-
-    let mut variables: Variables = HashMap::new();
-    run(out, &statements, &mut variables, &next_labels, labels[0], labels[labels.len() - 1]);
+    run(out, &statements, &next_labels, labels[0], labels[labels.len() - 1]);
 }
