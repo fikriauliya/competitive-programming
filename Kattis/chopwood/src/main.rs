@@ -7,43 +7,40 @@ pub struct UnsafeScanner<R> { reader: R, buf_str: Vec<u8>, buf_iter: str::SplitA
 
 fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W) {
     let n = scan.token::<usize>().unwrap();
-    let mut count = HashMap::new();
-    for i in 1..=n+1 { count.insert(i, 1); }
+    let mut count = vec![1;n+2];
 
     let mut tos = Vec::new();
     for i in 0..n {
         let to = scan.token::<usize>().unwrap();
         if i != n - 1 {
-            let c = count.get_mut(&to).unwrap();
-            *c += 1;
+            count[to] += 1;
         }
         tos.push(to);
     }
 
     let mut pq = BTreeMap::new();
-    for (node, c) in &count {
-        pq.insert((*c, *node), ());
+    for i in 1..=n+1 {
+        pq.insert((count[i], i), ());
     }
 
     let mut res = Vec::new();
-    // dbg!(&pq);
     for i in 0..tos.len() {
         let to = tos[i];
         let from = pq.iter().next();
         if let Some((fr,_)) = from {
             if fr.0 != 1 { writeln!(out, "Error"); return }
-            if *count.get(&to).unwrap() == 0 { writeln!(out, "Error"); return }
-            count.insert(fr.1, fr.0 - 1);
+            if count[to] == 0 { writeln!(out, "Error"); return }
+            count[fr.1] = fr.0 - 1;
 
             res.push(fr.1.to_string());
             pq.remove(&fr.clone());
 
-            let mut to_replace = (count.get(&to).cloned().unwrap(), to);
+            let mut to_replace = (count[to], to);
             pq.remove(&to_replace);
             to_replace.0 -= 1;
             pq.insert(to_replace, ());
 
-            count.insert(to, to_replace.0);
+            count[to] = to_replace.0;
         } else { writeln!(out, "Error"); return; }
     }
     writeln!(out, "{}", res.join("\n"));
