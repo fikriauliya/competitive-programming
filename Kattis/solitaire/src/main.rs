@@ -17,10 +17,12 @@ fn rec(rems: &mut HashSet<(isize, isize)>, matrix: &Vec<Vec<char>>, moves: usize
     for (i, j) in rems.clone().iter() {
         for (m, n) in move_and_next.iter() {
             if rems.contains(&(*i+m.0, *j+m.1)) && 
-                (0..matrix.len() as isize).contains(&(*i+n.0)) &&
-                (0..matrix[0].len() as isize).contains(&(*j+n.1)) &&
+                // (0..matrix.len() as isize).contains(&(*i+n.0)) &&
+                // (0..matrix[0].len() as isize).contains(&(*j+n.1)) &&
                 !rems.contains(&(*i+n.0, *j+n.1)) && 
-                matrix[(*i+n.0) as usize][(*j+n.1) as usize] != '#' {
+                matrix.get((*i+n.0) as usize).map(|v| v.get((*j+n.1) as usize).unwrap_or(&'#')).unwrap_or(&'#') != &'#' 
+                // matrix[(*i+n.0) as usize][(*j+n.1) as usize] != '#' {
+                {
                     can_move = true;
 
                     rems.remove(&(*i, *j));
