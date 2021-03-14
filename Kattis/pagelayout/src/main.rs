@@ -27,25 +27,22 @@ fn ls_one(x: u32) -> u32 {
     ((x as i32) & -(x as i32)) as u32
 }
 
-fn rec(memo: &mut Vec<i32>, rems: u32, papers: &Vec<Paper>, no_intersects: &HashMap<u32, u32>) -> u32 {
-    if rems == 0 { return 0; }
+fn rec(rems: u32, papers: &Vec<Paper>, no_intersects: &HashMap<u32, u32>, area: u32) -> u32 {
+    if rems == 0 { return area; }
 
-    if memo[rems as usize] != -1 { memo[rems as usize] as u32 }
-    else {
-        let mut res = 0;
-        let mut next_rems = rems;
-        loop {
-            let bit = ls_one(next_rems);
-            if bit == 0 { break; }
-            let i = (bit as f32).log2() as u32;
+    let mut res = 0;
+    let mut next_rems = rems;
+    loop {
+        let bit = ls_one(next_rems);
+        if bit == 0 { break; }
+        let i = (bit as f32).log2() as u32;
 
-            let rems = no_intersects[&i] & next_rems;
-            res = res.max(papers[i as usize].area() + rec(memo, rems, papers, no_intersects));
-            next_rems = next_rems & !bit;
-        }
-        memo[rems as usize] = res as i32;
-        res
+        let rems = no_intersects[&i] & next_rems;
+        res = res.max(rec(rems, papers, no_intersects, area + papers[i as usize].area()));
+        next_rems = next_rems & !bit;
+        if rems == next_rems { break; } //with or without this has the same reminders, prefer with
     }
+    res
 }
 
 fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W) {
@@ -72,6 +69,6 @@ fn solve<R: io::BufRead, W: io::Write>(scan: &mut UnsafeScanner<R>, out: &mut W)
                 }
             }
         }
-        writeln!(out, "{}", rec(&mut vec![-1;1<<n], (1 << n) - 1, &papers, &no_intersects));
+        writeln!(out, "{}", rec((1 << n) - 1, &papers, &no_intersects, 0));
     }
 }
