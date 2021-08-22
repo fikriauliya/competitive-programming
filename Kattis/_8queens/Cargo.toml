@@ -1,5 +1,5 @@
 [package]
-name = "4thought"
+name = "_8queens"
 version = "0.1.0"
 authors = ["Pahlevi Fikri Auliya <pahlevi.fikri.auliya@gmail.com>"]
 edition = "2018"
