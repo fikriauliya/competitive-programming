@@ -1,2 +1,2 @@
 [workspace]
-members = ["tools", "vestigium", "nestingdepth"]
+members = ["tools", "vestigium", "nestingdepth", "kgoodness", "lshaped", "rabbithouse", "checksum", "prisonbreak", "restoremodulo", "basicdiplomacy", "reversesort", "moonsandumbrella", "reversortengineering", "mediansort", "cheatingdetection", "appendsort", "primetime", "increasingsubstring", "longestprogession", "consecutiveprimes", "truckdelivery", "titfortat", "agagaxooorrr", "babyehabpartitionagain", "cut", "brokenclock", "subtransmutation", "closestpick", "roaringyears", "shuffledanagram", "palindromiccrossword"]
