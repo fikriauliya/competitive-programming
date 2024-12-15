@@ -33,6 +33,7 @@ while True:
     line = input()
     prizes = re.findall(r"(\d+)", line)
     prizes = list(map(int, prizes))
+    prizes = list(map(lambda x: x + 10000000000000, prizes))
 
     try:
         x1, x2 = solve_2x2_linear(*nums[0], *nums[1], *prizes)
